@@ -9,8 +9,9 @@ Per the project plan's milestone breakdown, this repo currently covers:
 
 - Environment setup for both apps
 - Database schema (see `backend/database/migrations`)
-- Role-based authentication for **customer** and **admin**
-  accounts, including admin's granular permission set — fully functional
+- Role-based authentication for **customer**, **admin**, and **super admin**
+  accounts — admins get full access by default, with an opt-in restriction
+  list a super admin can apply per admin — fully functional
 - Base REST API structure, consumed by a matching Next.js route structure
 
 Every other module (lease/EPO pricing engine, risk assessment, equipment
@@ -36,4 +37,6 @@ cp .env.local.example .env.local
 npm run dev
 ```
 
-Seeded super-admin: `admin@outdoorfix.test` / `password`.
+Seeded accounts (all password `password`):
+`superadmin@outdoorfix.test`, `admin@outdoorfix.test`,
+`restricted.admin@outdoorfix.test`, `customer@outdoorfix.test`.

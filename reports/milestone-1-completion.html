@@ -437,7 +437,7 @@
     <div class="meta-row">
       <span><strong>Prepared for</strong> Joel Stebbins</span>
       <span><strong>Prepared by</strong> Hanzalah</span>
-      <span><strong>Date</strong> August 25, 2026</span>
+      <span><strong>Date</strong> August 26, 2026</span>
     </div>
   </header>
 
@@ -474,13 +474,19 @@
             <span class="fine">Customers, Applications, Lease Agreements, Equipment Units + service history, Risk Profiles + red flags, Contracts, Payments, Admin permissions — plus a GPS Events table reserved for the Phase 2 tracking upgrade.</span>
           </li>
           <li>Role-based authentication (Laravel Sanctum)
-            <span class="fine">Two account types — Customer and Admin. Admin access splits into five permission areas: application review, risk assessment, contract generation, equipment tracking, payment tracking.</span>
+            <span class="fine">Three account types — Customer, Admin, and Super Admin. Only the Super Admin can create or remove Admin accounts. An admin has full access by default; the Super Admin can restrict any admin to any combination of five permission areas: application review, risk assessment, contract generation, equipment tracking, payment tracking.</span>
           </li>
           <li>Base REST API for every module
             <span class="fine">Routes and controllers scaffolded and ready — business logic lands module by module in the coming milestones.</span>
           </li>
+          <li>Customer directory for admins
+            <span class="fine">Read-only list and detail view of every registered customer, visible to any admin with application-review access.</span>
+          </li>
+          <li>Admin account-creation email
+            <span class="fine">Branded email with the new admin's login and a temporary password, sent the moment the Super Admin creates the account. Provider is confirmed — Amazon SES — but until the client's AWS credentials are wired in, it lands in a local log instead of a real inbox.</span>
+          </li>
           <li>Third-party connection points prepared
-            <span class="fine">Stripe, Plaid, SendGrid, and QuickBooks each have a configuration slot ready to receive live credentials when those milestones start.</span>
+            <span class="fine">Stripe, Plaid, and QuickBooks each have a configuration slot ready to receive live credentials when those milestones start.</span>
           </li>
         </ul>
       </div>
@@ -491,16 +497,19 @@
             <span class="fine">Separate, role-gated sections with their own navigation.</span>
           </li>
           <li>Working registration, login, and logout
-            <span class="fine">Customers self-register; admin accounts are created by an existing admin, never through public signup.</span>
+            <span class="fine">Customers self-register; admin accounts are created only by the Super Admin, never through public signup.</span>
           </li>
-          <li>Admin can manage other admins
-            <span class="fine">Create accounts and assign any combination of the five permission areas.</span>
+          <li>Full admin account management
+            <span class="fine">Super Admin can create, edit, and delete Admin accounts — with confirmation dialogs — and assign any combination of the five permission areas.</span>
+          </li>
+          <li>Role-aware dashboard
+            <span class="fine">An access-tabs row shows exactly which of the five permission areas an admin can reach; each area opens its own mini-dashboard — stat cards and an activity table — reflecting that admin's real permissions live.</span>
           </li>
           <li>Branded to the approved identity
-            <span class="fine">PROSTART Leasing logo, Barlow / Barlow Condensed type, red-on-black palette.</span>
+            <span class="fine">PROSTART Leasing logo (now clickable, back to the dashboard), Barlow / Barlow Condensed type, red-on-black palette, a footer line on every page.</span>
           </li>
           <li>Responsive down to mobile
-            <span class="fine">Navigation collapses to a menu below tablet width.</span>
+            <span class="fine">Navigation collapses to a menu below tablet width; dashboard cards reflow to two per row.</span>
           </li>
         </ul>
       </div>
@@ -510,15 +519,25 @@
       <h3>Verified, not just built</h3>
       <ol>
         <li>Customer registers and lands on their dashboard.</li>
-        <li>Admin logs in and sees only the sections their permissions allow.</li>
-        <li>Admin creates a second admin account and assigns it specific permissions.</li>
-        <li>Role checks are enforced twice — once in the interface, again by the API itself.</li>
+        <li>Admin logs in and sees only the nav items and dashboard areas their permissions allow.</li>
+        <li>Super Admin creates a new Admin account, assigns specific permissions, and the new admin receives a branded welcome email with their login credentials.</li>
+        <li>Role checks are enforced twice — once in the interface, again by the API itself — including a check that stops an admin ID from being targeted as if it were a customer's, or a super admin's.</li>
       </ol>
 
       <div class="creds">
         <div class="cred-card">
-          <p class="role">Admin login</p>
+          <p class="role">Super admin login</p>
+          <code>superadmin@outdoorfix.test</code>
+          <code>password</code>
+        </div>
+        <div class="cred-card">
+          <p class="role">Admin login (full access)</p>
           <code>admin@outdoorfix.test</code>
+          <code>password</code>
+        </div>
+        <div class="cred-card">
+          <p class="role">Admin login (restricted)</p>
+          <code>restricted.admin@outdoorfix.test</code>
           <code>password</code>
         </div>
         <div class="cred-card">
@@ -549,9 +568,8 @@
   <section>
     <p class="eyebrow">Worth a decision</p>
     <h2>Open items from the design review</h2>
-    <p class="section-intro">Three things noted as unconfirmed in the shared design reference — flagging here so nothing gets built twice.</p>
+    <p class="section-intro">Navigation placement is settled — confirmed at the top against the latest reference screens shared. Two things are still open from the design review, flagging here so nothing gets built twice.</p>
 
-    <div class="open-item"><strong>Navigation placement.</strong> Built at the top per the current direction; the reference notes it could move to the left if preferred.</div>
     <div class="open-item"><strong>Variation 2 elements.</strong> A few liked pieces from the second Figma variation were mentioned as candidates to fold in — send the specifics and they'll be matched.</div>
     <div class="open-item"><strong>Light vs. dark mode.</strong> Built in light mode for now; the final direction was left to be decided against the logo.</div>
   </section>
