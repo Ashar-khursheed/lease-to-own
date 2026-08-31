@@ -43,12 +43,172 @@ export const FIELD_TO_STEP: Record<string, StepKey> = {
   move_notification_agreed: "risk",
 };
 
-/** Which wizard step to jump to for the first field present in a validation error map. */
+export const STATE_TO_FIELD: Record<keyof WizardState, string> = {
+  salesPerson: "sales_person",
+  condition: "condition",
+  make: "make",
+  model: "model",
+  serial: "serial",
+  description: "description",
+  ldw: "ldw",
+  cashPrice: "cash_price",
+  year: "year",
+  promoCode: "promo_code",
+  termMonths: "term_months",
+  monthlyRental: "monthly_rental",
+  taxRate: "tax_rate",
+  securityDeposit: "security_deposit",
+  paymentDueDay: "payment_due_day",
+  autopay: "autopay",
+  registeredCustomerId: "registered_customer_id",
+  email: "email",
+  cellPhone: "cell_phone",
+  mailingAddress: "mailing_address",
+  city: "city",
+  state: "state",
+  zip: "zip",
+  dob: "date_of_birth",
+  driversLicense: "drivers_license",
+  idDocument: "id_document",
+  residenceType: "residence_type",
+  yearsAtResidence: "years_at_residence",
+  incomeSource: "income_source",
+  grossMonthlyIncome: "gross_monthly_income",
+  moveNotificationAgreed: "move_notification_agreed",
+};
+
 export function firstErrorStep(errors: Record<string, string[]>): StepKey | null {
   for (const key of Object.keys(errors)) {
     if (FIELD_TO_STEP[key]) return FIELD_TO_STEP[key];
   }
   return null;
+}
+
+export function validateEquipmentStep(state: WizardState): Record<string, string[]> {
+  const errors: Record<string, string[]> = {};
+
+  if (!state.cashPrice || isNaN(parseFloat(state.cashPrice)) || parseFloat(state.cashPrice) <= 0) {
+    errors.cash_price = ["Cash price is required and must be greater than $0."];
+  }
+  if (!state.condition) {
+    errors.condition = ["Equipment condition is required."];
+  }
+  if (!state.year || state.year.trim() === "") {
+    errors.year = ["Year is required."];
+  }
+  if (!state.make || state.make.trim() === "") {
+    errors.make = ["Make is required."];
+  }
+  if (!state.model || state.model.trim() === "") {
+    errors.model = ["Model is required."];
+  }
+  if (!state.serial || state.serial.trim() === "") {
+    errors.serial = ["Serial number is required."];
+  }
+
+  return errors;
+}
+
+export function validateLeaseStep(state: WizardState): Record<string, string[]> {
+  const errors: Record<string, string[]> = {};
+
+  if (!state.termMonths || isNaN(parseInt(state.termMonths, 10)) || parseInt(state.termMonths, 10) <= 0) {
+    errors.term_months = ["Lease term in months is required."];
+  }
+  if (!state.monthlyRental || isNaN(parseFloat(state.monthlyRental)) || parseFloat(state.monthlyRental) <= 0) {
+    errors.monthly_rental = ["Monthly rental payment is required and must be greater than $0."];
+  }
+  if (state.taxRate === "" || state.taxRate === undefined || state.taxRate === null || isNaN(parseFloat(state.taxRate)) || parseFloat(state.taxRate) < 0) {
+    errors.tax_rate = ["Sales tax rate percentage is required."];
+  }
+  if (!state.paymentDueDay || state.paymentDueDay.trim() === "") {
+    errors.payment_due_day = ["Payment due day is required."];
+  }
+
+  return errors;
+}
+
+export function validateCustomerStep(state: WizardState, isCustomerApp = false): Record<string, string[]> {
+  const errors: Record<string, string[]> = {};
+
+  if (!isCustomerApp && (!state.registeredCustomerId || state.registeredCustomerId.trim() === "")) {
+    errors.registered_customer_id = ["Please select a registered customer."];
+  }
+  if (!state.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email.trim())) {
+    errors.email = ["A valid email address is required."];
+  }
+  if (!state.cellPhone || state.cellPhone.trim() === "") {
+    errors.cell_phone = ["Cell phone number is required."];
+  }
+  if (!state.mailingAddress || state.mailingAddress.trim() === "") {
+    errors.mailing_address = ["Mailing address is required."];
+  }
+  if (!state.city || state.city.trim() === "") {
+    errors.city = ["City is required."];
+  }
+  if (!state.state || state.state.trim() === "") {
+    errors.state = ["State is required."];
+  }
+  if (!state.zip || state.zip.trim() === "") {
+    errors.zip = ["Zip code is required."];
+  }
+  if (!state.dob || state.dob.trim() === "") {
+    errors.date_of_birth = ["Date of birth is required."];
+  }
+  if (!state.driversLicense || state.driversLicense.trim() === "") {
+    errors.drivers_license = ["Driver's license number is required."];
+  }
+  if (!state.idDocument) {
+    errors.id_document = ["Driver's License or Government ID document upload is required."];
+  }
+
+  return errors;
+}
+
+export function validateRiskStep(state: WizardState): Record<string, string[]> {
+  const errors: Record<string, string[]> = {};
+
+  if (!state.residenceType || state.residenceType.trim() === "") {
+    errors.residence_type = ["Residence type is required."];
+  }
+  if (!state.yearsAtResidence || state.yearsAtResidence.trim() === "") {
+    errors.years_at_residence = ["Years at residence is required."];
+  }
+  if (!state.incomeSource || state.incomeSource.trim() === "") {
+    errors.income_source = ["Income source is required."];
+  }
+  if (!state.grossMonthlyIncome || isNaN(parseFloat(state.grossMonthlyIncome)) || parseFloat(state.grossMonthlyIncome) <= 0) {
+    errors.gross_monthly_income = ["Gross monthly income is required and must be greater than $0."];
+  }
+  if (!state.moveNotificationAgreed) {
+    errors.move_notification_agreed = ["Customer must agree to lease terms notification."];
+  }
+
+  return errors;
+}
+
+export function validateStep(stepKey: StepKey, state: WizardState, isCustomerApp = false): Record<string, string[]> {
+  switch (stepKey) {
+    case "equipment":
+      return validateEquipmentStep(state);
+    case "lease":
+      return validateLeaseStep(state);
+    case "customer":
+      return validateCustomerStep(state, isCustomerApp);
+    case "risk":
+      return validateRiskStep(state);
+    default:
+      return {};
+  }
+}
+
+export function validateAllSteps(state: WizardState, isCustomerApp = false): Record<string, string[]> {
+  return {
+    ...validateEquipmentStep(state),
+    ...validateLeaseStep(state),
+    ...validateCustomerStep(state, isCustomerApp),
+    ...validateRiskStep(state),
+  };
 }
 
 export interface WizardState {

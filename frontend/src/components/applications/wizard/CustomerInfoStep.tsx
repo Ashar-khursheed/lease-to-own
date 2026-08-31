@@ -37,47 +37,63 @@ export function CustomerInfoStep({
                 onChange={(v) => set("registeredCustomerId", v)}
                 placeholder="Select a registered customer…"
                 options={customers.map((c) => ({ value: String(c.id), label: `${c.name} · ${c.email}` }))}
+                hasError={!!err("registered_customer_id")}
               />
             </Field>
           )}
         </div>
 
         <Field label="Email" required error={err("email")}>
-          <TextInput value={state.email} onChange={(v) => set("email", v)} type="email" />
+          <TextInput
+            value={state.email}
+            onChange={(v) => set("email", v)}
+            type="email"
+            hasError={!!err("email")}
+          />
         </Field>
         <Field label="Cell Phone" required error={err("cell_phone")}>
-          <TextInput value={state.cellPhone} onChange={(v) => set("cellPhone", v)} placeholder="(000) 000-0000" />
+          <TextInput
+            value={state.cellPhone}
+            onChange={(v) => set("cellPhone", v)}
+            placeholder="(000) 000-0000"
+            hasError={!!err("cell_phone")}
+          />
         </Field>
 
         <div className="sm:col-span-2">
           <Field label="Mailing Address" required error={err("mailing_address")}>
-            <TextInput value={state.mailingAddress} onChange={(v) => set("mailingAddress", v)} placeholder="Street address" />
+            <TextInput
+              value={state.mailingAddress}
+              onChange={(v) => set("mailingAddress", v)}
+              placeholder="Street address"
+              hasError={!!err("mailing_address")}
+            />
           </Field>
         </div>
 
-        <Field label="City" error={err("city")}>
-          <TextInput value={state.city} onChange={(v) => set("city", v)} />
+        <Field label="City" required error={err("city")}>
+          <TextInput value={state.city} onChange={(v) => set("city", v)} hasError={!!err("city")} />
         </Field>
-        <Field label="State" error={err("state")}>
-          <TextInput value={state.state} onChange={(v) => set("state", v)} />
+        <Field label="State" required error={err("state")}>
+          <TextInput value={state.state} onChange={(v) => set("state", v)} hasError={!!err("state")} />
         </Field>
 
-        <Field label="Zip Code" error={err("zip")}>
-          <TextInput value={state.zip} onChange={(v) => set("zip", v)} />
+        <Field label="Zip Code" required error={err("zip")}>
+          <TextInput value={state.zip} onChange={(v) => set("zip", v)} hasError={!!err("zip")} />
         </Field>
         <Field label="Date of Birth" required error={err("date_of_birth")}>
-          <TextInput value={state.dob} onChange={(v) => set("dob", v)} type="date" />
+          <TextInput value={state.dob} onChange={(v) => set("dob", v)} type="date" hasError={!!err("date_of_birth")} />
         </Field>
 
         <div className="sm:col-span-2">
           <Field label="Driver's License #" required error={err("drivers_license")}>
-            <TextInput value={state.driversLicense} onChange={(v) => set("driversLicense", v)} />
+            <TextInput value={state.driversLicense} onChange={(v) => set("driversLicense", v)} hasError={!!err("drivers_license")} />
           </Field>
         </div>
 
         <div className="sm:col-span-2">
           <Field label="Upload D.L. or Gov't ID" required error={err("id_document")}>
-            <FileInput value={state.idDocument} onChange={(file) => set("idDocument", file)} />
+            <FileInput value={state.idDocument} onChange={(file) => set("idDocument", file)} hasError={!!err("id_document")} />
           </Field>
         </div>
       </div>

@@ -23,14 +23,32 @@ export function LeaseDetailsStep({
           <SectionHeading title="Lease details" />
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
             <Field label="Lease Months to Ownership" required error={err("term_months")}>
-              <TextInput value={state.termMonths} onChange={(v) => set("termMonths", v)} placeholder="36" type="number" />
+              <TextInput
+                value={state.termMonths}
+                onChange={(v) => set("termMonths", v)}
+                placeholder="36"
+                type="number"
+                hasError={!!err("term_months")}
+              />
             </Field>
-            <Field label="Sales Tax %" error={err("tax_rate")}>
-              <TextInput value={state.taxRate} onChange={(v) => set("taxRate", v)} placeholder="8.25" type="number" />
+            <Field label="Sales Tax %" required error={err("tax_rate")}>
+              <TextInput
+                value={state.taxRate}
+                onChange={(v) => set("taxRate", v)}
+                placeholder="8.25"
+                type="number"
+                hasError={!!err("tax_rate")}
+              />
             </Field>
 
             <Field label="Monthly Rental Payment" required error={err("monthly_rental")}>
-              <TextInput value={state.monthlyRental} onChange={(v) => set("monthlyRental", v)} placeholder="0.00" type="number" />
+              <TextInput
+                value={state.monthlyRental}
+                onChange={(v) => set("monthlyRental", v)}
+                placeholder="0.00"
+                type="number"
+                hasError={!!err("monthly_rental")}
+              />
             </Field>
             <Field label="Sales Tax">
               <TextInput value={money(pricing.salesTax)} onChange={() => {}} />
@@ -40,14 +58,25 @@ export function LeaseDetailsStep({
               <TextInput value={money(pricing.totalMonthlyPayment)} onChange={() => {}} />
             </Field>
             <Field label="Security Deposit" error={err("security_deposit")}>
-              <TextInput value={state.securityDeposit} onChange={(v) => set("securityDeposit", v)} placeholder="0.00" type="number" />
+              <TextInput
+                value={state.securityDeposit}
+                onChange={(v) => set("securityDeposit", v)}
+                placeholder="0.00"
+                type="number"
+                hasError={!!err("security_deposit")}
+              />
             </Field>
 
             <Field label="TOTAL DUE">
               <TextInput value={money(pricing.totalDueToday)} onChange={() => {}} />
             </Field>
             <Field label="Payment Due Day" required error={err("payment_due_day")}>
-              <TextInput value={state.paymentDueDay} onChange={(v) => set("paymentDueDay", v)} placeholder="15th" />
+              <TextInput
+                value={state.paymentDueDay}
+                onChange={(v) => set("paymentDueDay", v)}
+                placeholder="15th"
+                hasError={!!err("payment_due_day")}
+              />
             </Field>
 
             <Field label="Enroll in AutoPay?" error={err("autopay")}>
@@ -58,6 +87,7 @@ export function LeaseDetailsStep({
                   { value: "yes", label: "Yes" },
                   { value: "no", label: "No" },
                 ]}
+                hasError={!!err("autopay")}
               />
             </Field>
           </div>

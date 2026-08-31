@@ -24,10 +24,17 @@ export function EquipmentStep({
               value={state.salesPerson}
               onChange={(v) => set("salesPerson", v)}
               placeholder="Enter sales person's name"
+              hasError={!!err("sales_person")}
             />
           </Field>
           <Field label="Cash Price / Retail" required error={err("cash_price")}>
-            <TextInput value={state.cashPrice} onChange={(v) => set("cashPrice", v)} placeholder="0.00" type="number" />
+            <TextInput
+              value={state.cashPrice}
+              onChange={(v) => set("cashPrice", v)}
+              placeholder="0.00"
+              type="number"
+              hasError={!!err("cash_price")}
+            />
           </Field>
 
           <Field label="Condition" required error={err("condition")}>
@@ -38,27 +45,54 @@ export function EquipmentStep({
                 { value: "new", label: "New" },
                 { value: "used", label: "Used" },
               ]}
+              hasError={!!err("condition")}
             />
           </Field>
           <Field label="Year" required error={err("year")}>
-            <TextInput value={state.year} onChange={(v) => set("year", v)} placeholder="2026" type="number" />
+            <TextInput
+              value={state.year}
+              onChange={(v) => set("year", v)}
+              placeholder="2026"
+              type="number"
+              hasError={!!err("year")}
+            />
           </Field>
 
           <Field label="Make" required error={err("make")}>
-            <TextInput value={state.make} onChange={(v) => set("make", v)} placeholder="Worldlawn" />
+            <TextInput
+              value={state.make}
+              onChange={(v) => set("make", v)}
+              placeholder="Worldlawn"
+              hasError={!!err("make")}
+            />
           </Field>
           <Field label="Model" required error={err("model")}>
-            <TextInput value={state.model} onChange={(v) => set("model", v)} placeholder="Model name and deck width" />
+            <TextInput
+              value={state.model}
+              onChange={(v) => set("model", v)}
+              placeholder="Model name and deck width"
+              hasError={!!err("model")}
+            />
           </Field>
 
           <Field label="Serial #" required error={err("serial")}>
-            <TextInput value={state.serial} onChange={(v) => set("serial", v)} placeholder="Type NA if not available yet" />
+            <TextInput
+              value={state.serial}
+              onChange={(v) => set("serial", v)}
+              placeholder="Type NA if not available yet"
+              hasError={!!err("serial")}
+            />
           </Field>
         </div>
 
         <div className="mt-5">
           <Field label="Description" error={err("description")}>
-            <TextArea value={state.description} onChange={(v) => set("description", v)} placeholder="Model # if available" />
+            <TextArea
+              value={state.description}
+              onChange={(v) => set("description", v)}
+              placeholder="Model # if available"
+              hasError={!!err("description")}
+            />
           </Field>
         </div>
 
@@ -71,10 +105,16 @@ export function EquipmentStep({
                 { value: "yes", label: "Yes" },
                 { value: "no", label: "No" },
               ]}
+              hasError={!!err("ldw")}
             />
           </Field>
           <Field label="Promo Code" error={err("promo_code")}>
-            <TextInput value={state.promoCode} onChange={(v) => set("promoCode", v)} placeholder="Optional" />
+            <TextInput
+              value={state.promoCode}
+              onChange={(v) => set("promoCode", v)}
+              placeholder="Optional"
+              hasError={!!err("promo_code")}
+            />
           </Field>
         </div>
       </div>
