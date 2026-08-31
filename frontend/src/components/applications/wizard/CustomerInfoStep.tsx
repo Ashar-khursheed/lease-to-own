@@ -1,7 +1,6 @@
-import { Field, SelectInput, TextInput } from "@/components/applications/wizard/fields";
+import { Field, FileInput, SelectInput, TextInput } from "@/components/applications/wizard/fields";
 import type { WizardState } from "@/components/applications/wizard/types";
 import { SectionHeading } from "@/components/dashboard/SectionHeading";
-import { UploadIcon } from "@/components/icons";
 import type { AuthUser } from "@/types/auth";
 
 export function CustomerInfoStep({
@@ -63,10 +62,7 @@ export function CustomerInfoStep({
 
         <div className="sm:col-span-2">
           <Field label="Upload D.L. or Gov't ID" required>
-            <div className="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-neutral-300 py-8 text-sm text-neutral-400">
-              <UploadIcon className="h-5 w-5" />
-              Browse files or drag &amp; drop
-            </div>
+            <FileInput value={state.idDocument} onChange={(file) => set("idDocument", file)} />
           </Field>
         </div>
       </div>

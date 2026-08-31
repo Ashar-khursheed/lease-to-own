@@ -10,6 +10,8 @@ import { CustomerInfoStep } from "@/components/applications/wizard/CustomerInfoS
 import { RiskVerificationStep } from "@/components/applications/wizard/RiskVerificationStep";
 import { INITIAL_WIZARD_STATE, type WizardState } from "@/components/applications/wizard/types";
 import { listCustomers } from "@/lib/customers";
+import { createApplication } from "@/lib/applications";
+import { ApiError } from "@/lib/api";
 import type { AuthUser } from "@/types/auth";
 
 export default function NewLeaseApplicationPage() {
@@ -30,6 +32,8 @@ function NewLeaseApplicationForm() {
     zip: zipFromDashboard,
   }));
   const [customers, setCustomers] = useState<AuthUser[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     listCustomers()
@@ -50,6 +54,24 @@ function NewLeaseApplicationForm() {
   }
   function goBack() {
     if (!isFirst) setStep(STEPS[index - 1].key);
+  }
+
+  async function submit() {
+    setSubmitError(null);
+    if (!state.registeredCustomerId) {
+      setSubmitError("Select a registered customer before submitting.");
+      setStep("customer");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const application = await createApplication(state);
+      router.push(`/admin/applications/${application.id}`);
+    } catch (err) {
+      setSubmitError(err instanceof ApiError ? err.message : "Could not submit the application. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -81,13 +103,16 @@ function NewLeaseApplicationForm() {
         )}
 
         {isLast ? (
-          <button
-            disabled
-            title="Coming once the application workflow (Milestone 5) is wired up"
-            className="font-heading rounded-md bg-red-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-red-700"
-          >
-            Submit Application →
-          </button>
+          <div className="flex flex-col items-end gap-2">
+            {submitError && <p className="text-xs font-semibold text-red-600">{submitError}</p>}
+            <button
+              onClick={submit}
+              disabled={submitting}
+              className="font-heading rounded-md bg-red-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-60"
+            >
+              {submitting ? "Submitting…" : "Submit Application →"}
+            </button>
+          </div>
         ) : (
           <button
             onClick={goNext}

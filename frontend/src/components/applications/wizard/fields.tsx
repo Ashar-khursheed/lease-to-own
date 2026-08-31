@@ -1,4 +1,5 @@
-import type { ChangeEvent, ReactNode } from "react";
+import { useRef, useState, type ChangeEvent, type DragEvent, type ReactNode } from "react";
+import { CheckCircleIcon, UploadIcon, XIcon } from "@/components/icons";
 
 const inputClass =
   "w-full rounded-md border border-neutral-200 px-3 py-2.5 text-sm text-neutral-800 placeholder:text-neutral-400 focus:border-red-300 focus:outline-none";
@@ -70,6 +71,73 @@ export function SelectInput({
         </option>
       ))}
     </select>
+  );
+}
+
+export function FileInput({
+  value,
+  onChange,
+  accept = "image/*,.pdf",
+}: {
+  value: File | null;
+  onChange: (file: File | null) => void;
+  accept?: string;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [dragOver, setDragOver] = useState(false);
+
+  function pick(files: FileList | null) {
+    const file = files?.[0];
+    if (file) onChange(file);
+  }
+
+  if (value) {
+    return (
+      <div className="flex items-center justify-between gap-3 rounded-md border border-neutral-200 bg-neutral-50 px-4 py-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <CheckCircleIcon className="h-4 w-4 shrink-0 text-green-600" />
+          <span className="truncate text-sm font-medium text-neutral-700">{value.name}</span>
+          <span className="shrink-0 text-xs text-neutral-400">({(value.size / 1024).toFixed(0)} KB)</span>
+        </div>
+        <button
+          type="button"
+          onClick={() => onChange(null)}
+          className="shrink-0 rounded-full p-1 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-700"
+          aria-label="Remove file"
+        >
+          <XIcon className="h-4 w-4" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      onClick={() => inputRef.current?.click()}
+      onDragOver={(e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setDragOver(true);
+      }}
+      onDragLeave={() => setDragOver(false)}
+      onDrop={(e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setDragOver(false);
+        pick(e.dataTransfer.files);
+      }}
+      className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed py-8 text-sm transition ${
+        dragOver ? "border-red-400 bg-red-50 text-red-500" : "border-neutral-300 text-neutral-400 hover:border-red-300 hover:bg-red-50/40"
+      }`}
+    >
+      <UploadIcon className="h-5 w-5" />
+      Browse files or drag &amp; drop
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        className="hidden"
+        onChange={(e: ChangeEvent<HTMLInputElement>) => pick(e.target.files)}
+      />
+    </div>
   );
 }
 

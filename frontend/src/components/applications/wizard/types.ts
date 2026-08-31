@@ -27,6 +27,7 @@ export interface WizardState {
   zip: string;
   dob: string;
   driversLicense: string;
+  idDocument: File | null;
   // Step 4 — Risk & verification
   residenceType: string;
   yearsAtResidence: string;
@@ -61,6 +62,7 @@ export const INITIAL_WIZARD_STATE: WizardState = {
   zip: "",
   dob: "",
   driversLicense: "",
+  idDocument: null,
   residenceType: "",
   yearsAtResidence: "",
   incomeSource: "",
@@ -85,7 +87,30 @@ export interface LeasePricing {
   schedule: { month: number; value: number }[];
 }
 
-/** Sample pricing math — the real engine ships in Milestone 2. Auto-generated from cash price, monthly rental and term. */
+/**
+ * Real EPO formula from the signed lease agreement (Section 3): within the
+ * first 90 days (~3 monthly cycles), EPO = Cash Price − payments paid to
+ * date. After that, EPO = Cash Price − 50% of payments scheduled to date +
+ * payments still owed + additional funds. Taxes are due separately when the
+ * EPO is exercised, not folded into this number. At the final month the
+ * customer already owns the unit via the full-term path, so EPO is 0.
+ */
+const EPO_NINETY_DAY_MONTH_CUTOFF = 3;
+
+function epoAtMonth(cashPrice: number, monthlyRental: number, term: number, month: number, additionalFunds = 0) {
+  const m = Math.max(0, Math.min(term, month));
+  if (term <= 0 || m >= term) return 0;
+
+  const paymentsToDate = m * monthlyRental;
+  if (m <= EPO_NINETY_DAY_MONTH_CUTOFF) {
+    return Math.max(0, cashPrice - paymentsToDate);
+  }
+
+  const stillOwed = (term - m) * monthlyRental;
+  return Math.max(0, cashPrice - 0.5 * paymentsToDate + stillOwed + additionalFunds);
+}
+
+/** Lease pricing math — mirrors the signed contract's formulas exactly (see epoAtMonth above for EPO). */
 export function computeLeasePricing(state: WizardState): LeasePricing {
   const cashPrice = num(state.cashPrice);
   const term = parseInt(state.termMonths, 10) || 0;
@@ -97,7 +122,7 @@ export function computeLeasePricing(state: WizardState): LeasePricing {
   const totalMonthlyPayment = monthlyRental + salesTax;
   const totalDueToday = totalMonthlyPayment + securityDeposit;
   const totalRentalPrice = monthlyRental * term;
-  const epoAt = (month: number) => Math.max(0, cashPrice - month * monthlyRental);
+  const epoAt = (month: number) => epoAtMonth(cashPrice, monthlyRental, term, month);
 
   const schedule: { month: number; value: number }[] = [];
   if (term > 0) {

@@ -8,43 +8,27 @@ use Illuminate\Http\Request;
 
 class ApplicationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $applications = $request->user()->applications()->with('leaseAgreement.equipmentUnit')->latest()->get();
+
+        return response()->json(['data' => $applications]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        // Customers don't self-submit applications yet — every application in
+        // the current flow is created by an admin on the customer's behalf
+        // via the New Application wizard (Admin\ApplicationController@store).
+        abort(403, 'Applications are created by an Outdoor Fix representative.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Application $application)
+    public function show(Request $request, Application $application)
     {
-        //
-    }
+        abort_unless($application->customer_id === $request->user()->id, 404);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Application $application)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Application $application)
-    {
-        //
+        return response()->json([
+            'data' => $application->load(['leaseAgreement.equipmentUnit', 'leaseAgreement.payments']),
+        ]);
     }
 }
