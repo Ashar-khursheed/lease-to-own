@@ -46,6 +46,13 @@ export default function CustomerDashboardPage() {
               {loading ? "Loading your leases…" : `You have ${leases.length} lease${leases.length === 1 ? "" : "s"} with Outdoor Fix.`}
             </p>
           </div>
+          <Link
+            href="/customer/applications/new"
+            className="font-heading flex items-center gap-1.5 self-start rounded-md bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700"
+          >
+            <PlusIcon className="h-4 w-4" />
+            New Application
+          </Link>
         </div>
       </div>
 
@@ -54,7 +61,9 @@ export default function CustomerDashboardPage() {
       {!loading && leases.length === 0 && !error && (
         <div className="rounded-xl border border-neutral-200 bg-white p-8 text-center">
           <p className="text-sm font-semibold text-neutral-700">No leases yet</p>
-          <p className="mt-1 text-sm text-neutral-400">Once an Outdoor Fix representative submits your application, it will show up here.</p>
+          <p className="mt-1 text-sm text-neutral-400">
+            Start a new application above, or wait for an Outdoor Fix representative to submit one for you.
+          </p>
         </div>
       )}
 

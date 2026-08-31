@@ -7,24 +7,35 @@ export function CustomerInfoStep({
   state,
   set,
   customers,
+  applyingAs,
 }: {
   state: WizardState;
   set: <K extends keyof WizardState>(key: K, value: WizardState[K]) => void;
   customers: AuthUser[];
+  /** Customer self-service mode: hides the "pick a customer" selector and shows this name/email instead. */
+  applyingAs?: { name: string; email: string };
 }) {
   return (
     <div className="rounded-xl border border-neutral-200 bg-white p-6">
       <SectionHeading title="Renter contact information" />
       <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div className="sm:col-span-2">
-          <Field label="Registered Customer" required>
-            <SelectInput
-              value={state.registeredCustomerId}
-              onChange={(v) => set("registeredCustomerId", v)}
-              placeholder="Select a registered customer…"
-              options={customers.map((c) => ({ value: String(c.id), label: `${c.name} · ${c.email}` }))}
-            />
-          </Field>
+          {applyingAs ? (
+            <Field label="Applying As">
+              <div className="rounded-md border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-sm text-neutral-700">
+                {applyingAs.name} · {applyingAs.email}
+              </div>
+            </Field>
+          ) : (
+            <Field label="Registered Customer" required>
+              <SelectInput
+                value={state.registeredCustomerId}
+                onChange={(v) => set("registeredCustomerId", v)}
+                placeholder="Select a registered customer…"
+                options={customers.map((c) => ({ value: String(c.id), label: `${c.name} · ${c.email}` }))}
+              />
+            </Field>
+          )}
         </div>
 
         <Field label="Email" required>

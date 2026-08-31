@@ -69,6 +69,26 @@ export async function createApplication(state: WizardState): Promise<Application
   return data.data;
 }
 
+export async function listMyApplications(): Promise<Application[]> {
+  const data = await apiFetch<{ data: Application[] }>("/customer/applications", { token: getToken() });
+  return data.data;
+}
+
+export async function getMyApplication(id: number | string): Promise<Application> {
+  const data = await apiFetch<{ data: Application }>(`/customer/applications/${id}`, { token: getToken() });
+  return data.data;
+}
+
+/** Customer self-service submission — same wizard payload, minus the admin-only registered_customer_id/sales_person fields. */
+export async function createMyApplication(state: WizardState): Promise<Application> {
+  const data = await apiFetch<{ data: Application }>("/customer/applications", {
+    method: "POST",
+    token: getToken(),
+    body: wizardStateToFormData(state),
+  });
+  return data.data;
+}
+
 export interface ApplicationUpdatePayload {
   status?: ApplicationStatus;
   status_notes?: string | null;
