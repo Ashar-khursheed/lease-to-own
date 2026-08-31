@@ -9,11 +9,13 @@ export function Field({
   label,
   required,
   hint,
+  error,
   children,
 }: {
   label: string;
   required?: boolean;
   hint?: string;
+  error?: string;
   children: ReactNode;
 }) {
   return (
@@ -22,7 +24,11 @@ export function Field({
         {label} {required && <span className="text-red-600">*</span>}
       </label>
       {children}
-      {hint && <p className="mt-1 text-xs text-neutral-400">{hint}</p>}
+      {error ? (
+        <p className="mt-1 text-xs font-medium text-red-600">{error}</p>
+      ) : (
+        hint && <p className="mt-1 text-xs text-neutral-400">{hint}</p>
+      )}
     </div>
   );
 }

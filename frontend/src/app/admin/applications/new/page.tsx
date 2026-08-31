@@ -8,7 +8,7 @@ import { EquipmentStep } from "@/components/applications/wizard/EquipmentStep";
 import { LeaseDetailsStep } from "@/components/applications/wizard/LeaseDetailsStep";
 import { CustomerInfoStep } from "@/components/applications/wizard/CustomerInfoStep";
 import { RiskVerificationStep } from "@/components/applications/wizard/RiskVerificationStep";
-import { INITIAL_WIZARD_STATE, type WizardState } from "@/components/applications/wizard/types";
+import { firstErrorStep, INITIAL_WIZARD_STATE, type WizardState } from "@/components/applications/wizard/types";
 import { listCustomers } from "@/lib/customers";
 import { createApplication } from "@/lib/applications";
 import { ApiError } from "@/lib/api";
@@ -34,6 +34,7 @@ function NewLeaseApplicationForm() {
   const [customers, setCustomers] = useState<AuthUser[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
     listCustomers()
@@ -58,8 +59,9 @@ function NewLeaseApplicationForm() {
 
   async function submit() {
     setSubmitError(null);
+    setFieldErrors({});
     if (!state.registeredCustomerId) {
-      setSubmitError("Select a registered customer before submitting.");
+      setFieldErrors({ registered_customer_id: ["Select a registered customer before submitting."] });
       setStep("customer");
       return;
     }
@@ -68,7 +70,13 @@ function NewLeaseApplicationForm() {
       const application = await createApplication(state);
       router.push(`/admin/applications/${application.id}`);
     } catch (err) {
-      setSubmitError(err instanceof ApiError ? err.message : "Could not submit the application. Please try again.");
+      if (err instanceof ApiError && err.errors) {
+        setFieldErrors(err.errors);
+        const jumpTo = firstErrorStep(err.errors);
+        if (jumpTo) setStep(jumpTo);
+      } else {
+        setSubmitError(err instanceof ApiError ? err.message : "Could not submit the application. Please try again.");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -80,10 +88,12 @@ function NewLeaseApplicationForm() {
         <WizardSteps active={step} onSelect={setStep} />
       </PageHeroHeader>
 
-      {step === "equipment" && <EquipmentStep state={state} set={set} />}
-      {step === "lease" && <LeaseDetailsStep state={state} set={set} />}
-      {step === "customer" && <CustomerInfoStep state={state} set={set} customers={customers} />}
-      {step === "risk" && <RiskVerificationStep state={state} set={set} />}
+      {step === "equipment" && <EquipmentStep state={state} set={set} fieldErrors={fieldErrors} />}
+      {step === "lease" && <LeaseDetailsStep state={state} set={set} fieldErrors={fieldErrors} />}
+      {step === "customer" && (
+        <CustomerInfoStep state={state} set={set} customers={customers} fieldErrors={fieldErrors} />
+      )}
+      {step === "risk" && <RiskVerificationStep state={state} set={set} fieldErrors={fieldErrors} />}
 
       <div className="flex items-center justify-between">
         {isFirst ? (

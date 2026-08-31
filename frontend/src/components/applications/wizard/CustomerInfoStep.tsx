@@ -1,5 +1,5 @@
 import { Field, FileInput, SelectInput, TextInput } from "@/components/applications/wizard/fields";
-import type { WizardState } from "@/components/applications/wizard/types";
+import { fieldError, type WizardState } from "@/components/applications/wizard/types";
 import { SectionHeading } from "@/components/dashboard/SectionHeading";
 import type { AuthUser } from "@/types/auth";
 
@@ -8,13 +8,17 @@ export function CustomerInfoStep({
   set,
   customers,
   applyingAs,
+  fieldErrors,
 }: {
   state: WizardState;
   set: <K extends keyof WizardState>(key: K, value: WizardState[K]) => void;
   customers: AuthUser[];
   /** Customer self-service mode: hides the "pick a customer" selector and shows this name/email instead. */
   applyingAs?: { name: string; email: string };
+  fieldErrors?: Record<string, string[]>;
 }) {
+  const err = (key: string) => fieldError(fieldErrors, key);
+
   return (
     <div className="rounded-xl border border-neutral-200 bg-white p-6">
       <SectionHeading title="Renter contact information" />
@@ -27,7 +31,7 @@ export function CustomerInfoStep({
               </div>
             </Field>
           ) : (
-            <Field label="Registered Customer" required>
+            <Field label="Registered Customer" required error={err("registered_customer_id")}>
               <SelectInput
                 value={state.registeredCustomerId}
                 onChange={(v) => set("registeredCustomerId", v)}
@@ -38,41 +42,41 @@ export function CustomerInfoStep({
           )}
         </div>
 
-        <Field label="Email" required>
+        <Field label="Email" required error={err("email")}>
           <TextInput value={state.email} onChange={(v) => set("email", v)} type="email" />
         </Field>
-        <Field label="Cell Phone" required>
+        <Field label="Cell Phone" required error={err("cell_phone")}>
           <TextInput value={state.cellPhone} onChange={(v) => set("cellPhone", v)} placeholder="(000) 000-0000" />
         </Field>
 
         <div className="sm:col-span-2">
-          <Field label="Mailing Address" required>
+          <Field label="Mailing Address" required error={err("mailing_address")}>
             <TextInput value={state.mailingAddress} onChange={(v) => set("mailingAddress", v)} placeholder="Street address" />
           </Field>
         </div>
 
-        <Field label="City">
+        <Field label="City" error={err("city")}>
           <TextInput value={state.city} onChange={(v) => set("city", v)} />
         </Field>
-        <Field label="State">
+        <Field label="State" error={err("state")}>
           <TextInput value={state.state} onChange={(v) => set("state", v)} />
         </Field>
 
-        <Field label="Zip Code">
+        <Field label="Zip Code" error={err("zip")}>
           <TextInput value={state.zip} onChange={(v) => set("zip", v)} />
         </Field>
-        <Field label="Date of Birth" required>
+        <Field label="Date of Birth" required error={err("date_of_birth")}>
           <TextInput value={state.dob} onChange={(v) => set("dob", v)} type="date" />
         </Field>
 
         <div className="sm:col-span-2">
-          <Field label="Driver's License #" required>
+          <Field label="Driver's License #" required error={err("drivers_license")}>
             <TextInput value={state.driversLicense} onChange={(v) => set("driversLicense", v)} />
           </Field>
         </div>
 
         <div className="sm:col-span-2">
-          <Field label="Upload D.L. or Gov't ID" required>
+          <Field label="Upload D.L. or Gov't ID" required error={err("id_document")}>
             <FileInput value={state.idDocument} onChange={(file) => set("idDocument", file)} />
           </Field>
         </div>

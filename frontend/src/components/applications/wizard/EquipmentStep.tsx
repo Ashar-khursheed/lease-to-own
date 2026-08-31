@@ -1,32 +1,36 @@
 import { Field, RadioGroup, TextArea, TextInput } from "@/components/applications/wizard/fields";
 import { SidebarCard } from "@/components/applications/wizard/SidebarCard";
-import { money, num, type WizardState } from "@/components/applications/wizard/types";
+import { fieldError, money, num, type WizardState } from "@/components/applications/wizard/types";
 import { SectionHeading } from "@/components/dashboard/SectionHeading";
 
 export function EquipmentStep({
   state,
   set,
+  fieldErrors,
 }: {
   state: WizardState;
   set: <K extends keyof WizardState>(key: K, value: WizardState[K]) => void;
+  fieldErrors?: Record<string, string[]>;
 }) {
+  const err = (key: string) => fieldError(fieldErrors, key);
+
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_20rem]">
       <div className="rounded-xl border border-neutral-200 bg-white p-6">
         <SectionHeading title="Equipment details" />
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <Field label="Sales Person Name">
+          <Field label="Sales Person Name" error={err("sales_person")}>
             <TextInput
               value={state.salesPerson}
               onChange={(v) => set("salesPerson", v)}
               placeholder="Enter sales person's name"
             />
           </Field>
-          <Field label="Cash Price / Retail" required>
+          <Field label="Cash Price / Retail" required error={err("cash_price")}>
             <TextInput value={state.cashPrice} onChange={(v) => set("cashPrice", v)} placeholder="0.00" type="number" />
           </Field>
 
-          <Field label="Condition" required>
+          <Field label="Condition" required error={err("condition")}>
             <RadioGroup
               value={state.condition}
               onChange={(v) => set("condition", v as WizardState["condition"])}
@@ -36,30 +40,30 @@ export function EquipmentStep({
               ]}
             />
           </Field>
-          <Field label="Year" required>
+          <Field label="Year" required error={err("year")}>
             <TextInput value={state.year} onChange={(v) => set("year", v)} placeholder="2026" type="number" />
           </Field>
 
-          <Field label="Make" required>
+          <Field label="Make" required error={err("make")}>
             <TextInput value={state.make} onChange={(v) => set("make", v)} placeholder="Worldlawn" />
           </Field>
-          <Field label="Model" required>
+          <Field label="Model" required error={err("model")}>
             <TextInput value={state.model} onChange={(v) => set("model", v)} placeholder="Model name and deck width" />
           </Field>
 
-          <Field label="Serial #" required>
+          <Field label="Serial #" required error={err("serial")}>
             <TextInput value={state.serial} onChange={(v) => set("serial", v)} placeholder="Type NA if not available yet" />
           </Field>
         </div>
 
         <div className="mt-5">
-          <Field label="Description">
+          <Field label="Description" error={err("description")}>
             <TextArea value={state.description} onChange={(v) => set("description", v)} placeholder="Model # if available" />
           </Field>
         </div>
 
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <Field label="LDW (Loss Damage Waiver)">
+          <Field label="LDW (Loss Damage Waiver)" error={err("ldw")}>
             <RadioGroup
               value={state.ldw}
               onChange={(v) => set("ldw", v as WizardState["ldw"])}
@@ -69,7 +73,7 @@ export function EquipmentStep({
               ]}
             />
           </Field>
-          <Field label="Promo Code">
+          <Field label="Promo Code" error={err("promo_code")}>
             <TextInput value={state.promoCode} onChange={(v) => set("promoCode", v)} placeholder="Optional" />
           </Field>
         </div>

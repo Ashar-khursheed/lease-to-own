@@ -1,3 +1,56 @@
+import type { StepKey } from "@/components/applications/wizard/WizardSteps";
+
+/** First message for a field from a Laravel-style { field: string[] } validation error map. */
+export function fieldError(errors: Record<string, string[]> | undefined, key: string): string | undefined {
+  return errors?.[key]?.[0];
+}
+
+/** Which wizard step a given API field name belongs to — used to jump straight to the step with the error. */
+export const FIELD_TO_STEP: Record<string, StepKey> = {
+  sales_person: "equipment",
+  cash_price: "equipment",
+  condition: "equipment",
+  year: "equipment",
+  make: "equipment",
+  model: "equipment",
+  serial: "equipment",
+  description: "equipment",
+  ldw: "equipment",
+  promo_code: "equipment",
+
+  term_months: "lease",
+  tax_rate: "lease",
+  monthly_rental: "lease",
+  security_deposit: "lease",
+  payment_due_day: "lease",
+  autopay: "lease",
+
+  registered_customer_id: "customer",
+  email: "customer",
+  cell_phone: "customer",
+  mailing_address: "customer",
+  city: "customer",
+  state: "customer",
+  zip: "customer",
+  date_of_birth: "customer",
+  drivers_license: "customer",
+  id_document: "customer",
+
+  residence_type: "risk",
+  years_at_residence: "risk",
+  income_source: "risk",
+  gross_monthly_income: "risk",
+  move_notification_agreed: "risk",
+};
+
+/** Which wizard step to jump to for the first field present in a validation error map. */
+export function firstErrorStep(errors: Record<string, string[]>): StepKey | null {
+  for (const key of Object.keys(errors)) {
+    if (FIELD_TO_STEP[key]) return FIELD_TO_STEP[key];
+  }
+  return null;
+}
+
 export interface WizardState {
   // Step 1 — Equipment
   salesPerson: string;

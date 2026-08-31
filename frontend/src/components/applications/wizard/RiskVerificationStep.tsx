@@ -1,5 +1,5 @@
 import { Field, SelectInput, TextInput } from "@/components/applications/wizard/fields";
-import type { WizardState } from "@/components/applications/wizard/types";
+import { fieldError, type WizardState } from "@/components/applications/wizard/types";
 import { SectionHeading } from "@/components/dashboard/SectionHeading";
 import { CheckIcon } from "@/components/icons";
 
@@ -28,11 +28,14 @@ const INCOME_OPTIONS = [
 export function RiskVerificationStep({
   state,
   set,
+  fieldErrors,
 }: {
   state: WizardState;
   set: <K extends keyof WizardState>(key: K, value: WizardState[K]) => void;
+  fieldErrors?: Record<string, string[]>;
 }) {
   const isApartment = state.residenceType === "rent_apartment";
+  const err = (key: string) => fieldError(fieldErrors, key);
 
   return (
     <div className="space-y-6">
@@ -42,6 +45,7 @@ export function RiskVerificationStep({
           <Field
             label="Residence Type"
             required
+            error={err("residence_type")}
             hint={isApartment ? "Apartments are automatically declined per underwriting policy." : undefined}
           >
             <SelectInput
@@ -50,7 +54,7 @@ export function RiskVerificationStep({
               options={RESIDENCE_OPTIONS}
             />
           </Field>
-          <Field label="Years at Residence" required>
+          <Field label="Years at Residence" required error={err("years_at_residence")}>
             <SelectInput
               value={state.yearsAtResidence}
               onChange={(v) => set("yearsAtResidence", v)}
@@ -58,10 +62,10 @@ export function RiskVerificationStep({
             />
           </Field>
 
-          <Field label="Income Source" required>
+          <Field label="Income Source" required error={err("income_source")}>
             <SelectInput value={state.incomeSource} onChange={(v) => set("incomeSource", v)} options={INCOME_OPTIONS} />
           </Field>
-          <Field label="Gross Monthly Income" required>
+          <Field label="Gross Monthly Income" required error={err("gross_monthly_income")}>
             <TextInput
               value={state.grossMonthlyIncome}
               onChange={(v) => set("grossMonthlyIncome", v)}
