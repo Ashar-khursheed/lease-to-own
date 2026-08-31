@@ -62,7 +62,7 @@ export function CustomerInfoStep({
           <TextInput value={state.zip} onChange={(v) => set("zip", v)} />
         </Field>
         <Field label="Date of Birth" required>
-          <TextInput value={state.dob} onChange={(v) => set("dob", v)} placeholder="MM-DD-YYYY" />
+          <TextInput value={state.dob} onChange={(v) => set("dob", v)} type="date" />
         </Field>
 
         <div className="sm:col-span-2">
